@@ -1,5 +1,11 @@
 import { StyleSheet } from "react-native";
 
+/**
+ * no react native, para estilizar um componente,
+ * nós precisamos definir um objeto com os estilos
+ * para o componente
+ */
+
 const styles = StyleSheet.create({
   container: {
     width: "100%",
