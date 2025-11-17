@@ -6,6 +6,7 @@ type Pessoa = {
   nomeCompleto: string;
   telefone: string;
   endereco: Endereco;
+  fotoPessoa: string;
 
 }
 

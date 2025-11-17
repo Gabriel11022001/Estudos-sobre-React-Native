@@ -1,4 +1,4 @@
-import Home from "./views/Home";
+import Navigation from "./navigation";
 
 export default function App() {
 
@@ -8,6 +8,6 @@ export default function App() {
    */
 
   return (
-    <Home />
+    <Navigation />
   );
 }

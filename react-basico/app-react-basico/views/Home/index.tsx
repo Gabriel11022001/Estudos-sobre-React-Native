@@ -8,13 +8,24 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Home = () => {
+const Home = ({ navigation }: any) => {
 
   const [ pessoas, setPessoas ] = useState<Array<Pessoa>>([]);
   const [ isCarregando, setIsCarregando ] = useState<boolean>(false);
 
   // redirecionar o usuário para a tela para visualizar os dados da pessoa
   const visualizarPessoa = (pessoaVisualizarId: number): void => {
+
+    try {
+      const pessoaVisualizar: Pessoa | undefined = pessoas.find(pessoa => pessoa.id == pessoaVisualizarId);
+
+      if (pessoaVisualizar != undefined) {
+        navigation.navigate("detalhes", { pessoa: pessoaVisualizar });
+      }
+
+    } catch (e) {
+      console.error("Erro na navegação: " + e);
+    }
 
   }
 
@@ -74,7 +85,8 @@ const Home = () => {
               cidade: pessoasApi[ i ].location.city,
               estado: pessoasApi[ i ].location.state,
               logradouro: pessoasApi[ i ].location.street.name
-            }
+            },
+            fotoPessoa: pessoasApi[ i ].picture.large
           });
         }
 
@@ -110,7 +122,7 @@ const Home = () => {
       <Cabecalho titulo="Pessoas!" />
       <ScrollView style={ { flex: 1, padding: 10 } } showsVerticalScrollIndicator={ false } >
         { /**
-         * posso utilizar o TouchableOpacity para implementar um botão personalizado */ }
+         * posso utilizar o TouchableOpacity para implementar um botão personalizado clicável */ }
         <TouchableOpacity
           style={ {
             width: "100%",
