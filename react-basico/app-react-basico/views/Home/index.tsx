@@ -4,7 +4,8 @@ import Cabecalho from "@/components/Cabecalho";
 import ListaPessoas from "@/components/ListaPessoas";
 import Loader from "@/components/Loader";
 import PessoaItem from "@/components/PessoaItem";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -111,9 +112,14 @@ const Home = ({ navigation }: any) => {
 
   }
   
-  useEffect(() => {
+  /*useEffect(() => {
     buscarPessoas();
-  }, []);
+  }, []);*/
+
+  // recarregar todas as vezes que acessar a tela
+  useFocusEffect(useCallback(() => {
+    buscarPessoas();
+  }, []));
 
   return (
     <SafeAreaView style={ { flex: 1 } }>
@@ -129,16 +135,17 @@ const Home = ({ navigation }: any) => {
             padding: 20,
             backgroundColor: "black",
             marginTop: 20,
-            marginBottom: 20,
-            borderRadius: 10,
+            marginBottom: 30,
+            borderRadius: 20,
             alignItems: "center",
-            justifyContent: "center"
+            justifyContent: "center",
+            elevation: 5
           } }
           onPress={ () => { // quando o usuário clica no botão executa essa action
             // buscar pessoas novamente
             buscarPessoas();
           } }>
-            <Text style={ { color: "white", fontSize: 16, fontWeight: "bold" } }>Recarregar</Text>
+            <Text style={ { color: "white", fontSize: 20 } }>Recarregar</Text>
         </TouchableOpacity>
         { /* RenderizarListaPessoas()*/ }
         <ListaPessoas pessoas={ pessoas } onVisualizarPessoa={ (pessoaVisualizarId: number) => {
