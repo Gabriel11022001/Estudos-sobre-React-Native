@@ -1,14 +1,19 @@
-import { useEffect, useState } from "react";
-import { ScrollView } from "react-native";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import { Alert, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ListaPosts from "./components/ListaPosts";
+import Loader from "./components/Loader";
 import Titulo from "./components/Titulo";
 import Post from "./data/post";
+import { cadastrarPostsTeste, darLikePostagem, listarTodasPostagens, marcarPostFavoritoUsuario } from "./repositorio/postRepositorio";
 
 // componente que representa a tela inicial do app
 const Index = () => {
 
   const [ posts, setPosts ] = useState<Array<Post>>([]);
+  const [ reload, setReload ] = useState<boolean>(false);
+  const [ carregando, setCarregando ] = useState<boolean>(false);
 
   const listarPosts = (): void => {
     const postsFake: Post[] = [
@@ -77,24 +82,151 @@ const Index = () => {
     setPosts(postsFake);
   }
 
-  const darLikePost = (idPost: number): void => {
+  // dar like no post
+  const darLikePost = (idPost: number, estaComSeuLike: boolean): void => {
+    console.log("Dar like/remover like no post...");
+
+    try {
+      const novosPots: Array<Post> = posts.map((post: Post) => {
+        const postRetornar: Post = { ...post };
+
+        if (post.id === idPost) {
+
+          if (estaComSeuLike) {
+            postRetornar.voceDeuLike = false;
+            postRetornar.quantidadeLikes--;
+          } else {
+            postRetornar.voceDeuLike = true;
+            postRetornar.quantidadeLikes++;
+          }
+
+        }
+
+        return postRetornar;
+      });
+
+      setPosts(novosPots);
+    } catch (e) {
+      console.error("Erro ao tentar-se dar o like: " + e);
+    }
 
   }
 
+  // compartilhar o post
   const compartiharPost = (idPost: number): void => {
+    console.log("Compartilhar post...");
+  }
+
+  // marcar o post como favorito
+  const marcarComoFavorito = (idPost: number, marcadoAtualmentoComoFavorito: boolean): void => {
+    console.log("Marcar post como favorito...");
+
+    try {
+      const novosPosts: Post[] = posts.map(function (postValidar: Post) {
+        const postRetornar: Post = { ...postValidar };
+
+        if (postValidar.id === idPost) {
+
+          if (marcadoAtualmentoComoFavorito) {
+            postRetornar.marcadoFavorito = false;
+          } else {
+            postRetornar.marcadoFavorito = true;
+          }
+
+        }
+
+        console.log(postRetornar);
+        return postRetornar;
+      });
+
+      setPosts(novosPosts);
+    } catch (e) {
+      console.error("Erro ao tentar-se marcar como favorito: " + e);
+    }
 
   }
 
-  const marcarComoFavorito = (idPost: number): void => {
+  // listar posts mas pelo asyncstorage
+  const listarPostsAsync = async () => {
+    setCarregando(true);
+    setPosts([]);
+
+    try {
+      const postsLista: Array<Post> = await listarTodasPostagens();
+
+      if (postsLista.length > 0) {
+        console.log(postsLista);
+
+        setPosts(postsLista);
+      } else {
+        console.log("Nenhum post foi encontrado na base de dados...");
+      }
+
+    } catch (e) {
+      console.error("Erro ao tentar-se listar os posts: " + e);
+
+      Alert.alert("Atenção!", "Erro ao tentar-se listar os posts!", [
+        {
+          style: "destructive",
+          onPress: () => {},
+          text: "OK"
+        }
+      ]);
+    } finally {
+      setCarregando(false);
+    }
 
   }
 
-  useEffect(() => {
-    listarPosts();
-  }, []);
+  // dar like no post pelo asyncstorage
+  const darLikePostAsync = async (post: Post) => {
+    
+    try {
+      await darLikePostagem(post.id)
+        .then(() => {
+        })
+        .catch((erro) => {
+          console.error("Erro ao tentar-se dar o like no post: " + erro);
+        })
+        .finally(() => {
+          listarPostsAsync();
+        });
+    } catch (e) {
+      console.error("Erro ao tentar-se dar like no post: " + e);
+
+      apresentarAlerta("Erro ao tentar-se dar like no post!");
+    }
+
+  }
+
+  const apresentarAlerta = (msg: string): void => {
+    Alert.alert("Atenção!", msg.trim(), [ { style: "default", onPress: () => {}, text: "OK" } ]);
+  }
+
+  // marcar o post como favorito com asyncstorage
+  const marcarPostFavoritoAsync = async (post: Post) => {
+
+    try {
+      await marcarPostFavoritoUsuario(post.id)
+        .then(() => {})
+        .catch((erro) => { apresentarAlerta("Erro ao tentar-se marcar o post como favorito: " + erro) })
+        .finally(() => { listarTodasPostagens() })
+    } catch (e) {
+      console.log("Erro ao tentar-se marcar o post como favorito: " + e);
+
+      apresentarAlerta("Erro ao tentar-se marcar o post como favorito!");
+    }
+
+  }
+
+  useFocusEffect(useCallback(() => {
+    cadastrarPostsTeste();
+    listarPostsAsync();
+  }, []));
 
   return (
     <SafeAreaView>
+      <Loader isCarregando={ carregando } />
       <ScrollView showsVerticalScrollIndicator={ false } >
         { /** título da página */ }
         <Titulo />
@@ -102,13 +234,15 @@ const Index = () => {
         <ListaPosts
           posts={ posts }
           darLike={ (post: Post) => {
-            darLikePost(post.id);
+            // darLikePost(post.id, post.voceDeuLike);
+            darLikePostAsync(post);
           } }
           compartilhar={ (post: Post) => {
             compartiharPost(post.id);
           } }
           marcarFavorito={ (post: Post) => {
-            marcarComoFavorito(post.id);
+            // marcarComoFavorito(post.id, post.marcadoFavorito);
+            marcarPostFavoritoAsync(post);
           } } />
       </ScrollView>
     </SafeAreaView>

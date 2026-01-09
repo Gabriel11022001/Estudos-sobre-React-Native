@@ -39,6 +39,16 @@ const PostItem = ({ post, darLike, compartilhar, marcarFavorito }: PostProps) =>
       return <FontAwesome name="comment-o" size={ 26 } color="black" />
     }
 
+    if (operacao === "favorito") {
+
+      if (post.marcadoFavorito) {
+
+        return <FontAwesome name="bookmark" size={ 26 } color="blue" />
+      }
+
+      return <FontAwesome name="bookmark" size={ 26 } color="black" />
+    }
+
   }
 
   const Operacao = (operacao: string, quantidade: number, operacaoEfetuar: (post: Post) => void) => {
@@ -65,7 +75,7 @@ const PostItem = ({ post, darLike, compartilhar, marcarFavorito }: PostProps) =>
           { Operacao("compartilhar", post.quantidadeCompartilhamentos, compartilhar) }
         </View>
         <View>
-          { Operacao("", 0, marcarFavorito) }
+          { Operacao("favorito", 0, marcarFavorito) }
         </View>
       </View>
     </View>
