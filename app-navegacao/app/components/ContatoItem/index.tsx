@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     flexDirection: "row",
     alignItems: "center",
-    padding: 20
+    padding: 10
   },
   containerDados: {
     marginStart: 20

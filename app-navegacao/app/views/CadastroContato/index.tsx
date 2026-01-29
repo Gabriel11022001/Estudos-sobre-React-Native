@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text } from "react-native";
 
 // tela de cadastro de contatos
-const CadastroContato = () => {
+const CadastroContato = ({ route, navigation }: any) => {
 
   const [ carregando, setCarregando ] = useState<boolean>(false);
   const [ nome, setNome ] = useState<string>("");
@@ -16,6 +16,10 @@ const CadastroContato = () => {
   const [ erroNome, setErroNome ] = useState<string>("");
   const [ erroEmail, setErroEmail ] = useState<string>("");
   const [ erroTelefone, setErroTelefone ] = useState<string>("");
+
+  const textoApresentar = route.params?.textoApresentarConsole;
+
+  console.log(`Texto vindo da outra tela: ${ textoApresentar }`);
 
   const limparCampos = (): void => {
     setNome("");
@@ -151,6 +155,12 @@ const CadastroContato = () => {
       <Botao titulo="Salvar" onPressionar={ () => {
         cadastrar();
       } } />
+      <Botao
+        titulo="Cancelar"
+        onPressionar={ () => {
+          // voltar para a tela anterior
+          navigation.goBack();
+        } } />
     </ScrollView>
   </TelaApp>
 }

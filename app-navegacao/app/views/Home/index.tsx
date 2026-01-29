@@ -23,8 +23,10 @@ const Home = () => {
   function navegarStack(tela: string): void {
     console.log("Navegar para a tela: " + tela);
 
-    // navegar para a tela de cadastro de contatos
-    navigation.navigate(tela.trim());
+    // navegar para a tela de cadastro de contatos e passando dados para a tela
+    navigation.navigate(tela.trim(), {
+      textoApresentarConsole: "Seja bem vindo!"
+    });
   }
 
   return (
