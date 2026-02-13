@@ -28,9 +28,17 @@ const Login = ({ navigation }: any) => {
 
   // entrar no aplicativo
   const entrar = async () => {
-    setCarregando(true);
-
+    
     try {
+
+      /*if (email.trim() === "" || senha.trim() === "") {
+        apresentarAlertaErro("Informe o e-mail e a senha!");
+
+        return;
+      }*/
+
+      setCarregando(true);
+
       const usuarioLogin: Usuario = {
         email: email.trim(),
         senha: senha.trim()

@@ -18,12 +18,16 @@ const MenuHome = ({ redirecionar }: Props) => {
   return <View>
     <View style={ styles.containerLinha }>
       { /** cadastro de cliente */ }
-      <TouchableOpacity style={ styles.opcao }>
+      <TouchableOpacity style={ styles.opcao } onPress={ () => {
+        redirecionar({ titulo: "cadastro_usuario" });
+      } }>
         <AntDesign name="user-add" size={ 50 } color="black" />
         <Text style={ styles.texto }>Cadastrar Usuário</Text>
       </TouchableOpacity>
       { /**  listagem de clientes */ }
-      <TouchableOpacity style={ styles.opcao }>
+      <TouchableOpacity style={ styles.opcao } onPress={ () => {
+        redirecionar({ titulo: "usuarios" });
+      } }>
         <AntDesign name="user" size={ 50 } color="black" />
         <Text style={ styles.texto }>Usuários</Text>
       </TouchableOpacity>

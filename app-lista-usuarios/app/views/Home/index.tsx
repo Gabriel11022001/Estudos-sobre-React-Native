@@ -10,9 +10,9 @@ export default function Home({ navigation }: any) {
   const redirecionar = async ({ titulo }: Opcao) => {
 
     if (titulo === "cadastro_usuario") {
-
+      navigation.navigate("cadastro_usuario");
     } else if (titulo === "usuarios") {
-
+      navigation.navigate("usuarios");
     } else {
       // logout
       await logout();
